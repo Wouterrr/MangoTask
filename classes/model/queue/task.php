@@ -78,15 +78,26 @@ class Model_Queue_Task extends Mango {
 	/**
 	 * Execute task
 	 *
-	 * @param   int   Maximum number of tries before task is considered failed
+	 * @param   array|string   Configuration (name)
 	 * @return  boolean   Task was executed succesfully
 	 */
-	public function execute($max_tries = 1)
+	public function execute($config = NULL)
 	{
+		if ( $config === NULL)
+		{
+			// load default config
+			$config = Kohana::$config->load('daemon')->default;
+		}
+		elseif ( is_string($config))
+		{
+			// configuration name specified
+			$config = Kohana::$config->load('daemon')->$config;
+		}
+
 		$success = FALSE;
 
 		// execute request
-		for ( $i = 0; $i < $max_tries; $i++)
+		for ( $i = 0; $i < $config['max_tries']; $i++)
 		{
 			if ( ! $success && $this->_execute())
 			{
@@ -94,12 +105,27 @@ class Model_Queue_Task extends Mango {
 			}
 		}
 
-		// save result
-		$task->status = $success
-			? 'completed'
-			: 'failed';
+		// store result
+		$task->status = $success ? 'completed' : 'failed';
+
+		if ( ! $success)
+		{
+			// log failure
+			Kohana::$log->add($config['log']['error'], $this->error_message( ! $config['keep_failed']));
+		}
+
+		// update / delete task?
+		if ( ($this->status === 'completed' && ! $config['keep_completed']) || ($this->status === 'failed' && ! $config['keep_failed']))
+		{
+			$this->delete();
+		}
+		else
+		{
+			$this->update();
+		}
 
 		return $success;
+	}
 
 	/**
 	 * Execute task - overload this method
