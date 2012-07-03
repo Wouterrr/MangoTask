@@ -132,7 +132,7 @@ class Model_Queue_Task extends Mango {
 	 * 
 	 * @return  boolean   Task was executed succesfully
 	 */
-	public function _execute()
+	protected function _execute()
 	{
 		return TRUE;
 	}
