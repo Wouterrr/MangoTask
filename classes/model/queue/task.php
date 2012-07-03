@@ -86,12 +86,12 @@ class Model_Queue_Task extends Mango {
 		if ( $config === NULL)
 		{
 			// load default config
-			$config = Kohana::$config->load('daemon')->default;
+			$config = Kohana::$config->load('tasks')->default;
 		}
 		elseif ( is_string($config))
 		{
 			// configuration name specified
-			$config = Kohana::$config->load('daemon')->$config;
+			$config = Kohana::$config->load('tasks')->$config;
 		}
 
 		$success = FALSE;
