@@ -106,7 +106,7 @@ class Model_Queue_Task extends Mango {
 		}
 
 		// store result
-		$task->status = $success ? 'completed' : 'failed';
+		$this->status = $success ? 'completed' : 'failed';
 
 		if ( ! $success)
 		{
