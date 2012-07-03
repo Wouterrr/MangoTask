@@ -40,49 +40,43 @@ class Model_Queue_Task_Request extends Model_Task {
 	/**
 	 * Execute request
 	 *
-	 * @param   int   Maximum number of tries before task is considered failed
 	 * @return  boolean   Task was executed succesfully
 	 */
-	public function execute($max_tries = 1)
+	protected function _execute()
 	{
 		$request = $this->request();
+		$error   = NULL;
 
-		// execute request
-		for ( $i = 0; $i < $max_tries; $i++)
+		try
 		{
-			$error = NULL;
+			// execute task
+			$response = $request->execute();
 
-			try
+			// store response in task
+			$this->response = $response->render();
+
+			// analyse response
+			if ( $response->status() > 199 && $response->status() < 300)
 			{
-				// execute task
-				$response = $request->execute();
-
-				// store response in task
-				$this->response = $response->render();
-
-				// analyse response
-				if ( $response->status() > 199 && $response->status() < 300)
-				{
-					// task completed successfully
-					return TRUE;
-				}
-				else
-				{
-					// server error
-					$this->message = strtr("Invalid response status (:status) while executing :uri", array(
-						':uri'      => $request->uri(),
-						':status'   => $response->status(),
-					));
-				}
+				// task completed successfully
+				return TRUE;
 			}
-			catch ( Exception $e)
+			else
 			{
-				// request error
-				$this->message = strtr("Unable to execute task: :uri, (:msg)", array(
-					':uri'     => $request->uri(),
-					':msg'     => $e->getMessage(),
+				// server error
+				$this->message = strtr("Invalid response status (:status) while executing :uri", array(
+					':uri'      => $request->uri(),
+					':status'   => $response->status(),
 				));
 			}
+		}
+		catch ( Exception $e)
+		{
+			// request error
+			$this->message = strtr("Unable to execute task: :uri, (:msg)", array(
+				':uri'     => $request->uri(),
+				':msg'     => $e->getMessage(),
+			));
 		}
 
 		return FALSE;

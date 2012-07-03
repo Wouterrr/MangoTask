@@ -76,12 +76,37 @@ class Model_Queue_Task extends Mango {
 	}
 
 	/**
-	 * Execute task (overload this method)
+	 * Execute task
 	 *
 	 * @param   int   Maximum number of tries before task is considered failed
 	 * @return  boolean   Task was executed succesfully
 	 */
 	public function execute($max_tries = 1)
+	{
+		$success = FALSE;
+
+		// execute request
+		for ( $i = 0; $i < $max_tries; $i++)
+		{
+			if ( ! $success && $this->_execute())
+			{
+				$success = TRUE;
+			}
+		}
+
+		// save result
+		$task->status = $success
+			? 'completed'
+			: 'failed';
+
+		return $success;
+
+	/**
+	 * Execute task - overload this method
+	 * 
+	 * @return  boolean   Task was executed succesfully
+	 */
+	public function _execute()
 	{
 		return TRUE;
 	}
