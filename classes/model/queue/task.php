@@ -54,6 +54,12 @@ class Model_Queue_Task extends Mango {
 		return parent::update($criteria, $safe);
 	}
 
+	public function requeue()
+	{
+		$this->status = 'queued';
+		$this->update();
+	}
+
 	/**
 	 * Return error message of failed task for logging purposes
 	 *
