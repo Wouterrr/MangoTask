@@ -72,10 +72,12 @@ class Model_Queue_Task_Request extends Model_Task {
 		}
 		catch ( Exception $e)
 		{
+			$error = Kohana_Exception::text($e)."\n--\n" . $e->getTraceAsString();
+
 			// request error
-			$this->message = strtr("Unable to execute task: :uri, (:msg)", array(
+			$this->message = strtr("Unable to execute task: :uri - :msg", array(
 				':uri'     => $request->uri(),
-				':msg'     => $e->getMessage(),
+				':msg'     => $error,
 			));
 		}
 
