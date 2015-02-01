@@ -35,7 +35,7 @@ class Model_Queue_Task extends Mango {
 		return Mango::factory('task', Arr::get($values,'value', array()), Mango::CLEAN);
 	}
 
-	public function create($safe = TRUE)
+	public function create($options = array())
 	{
 		// make sure some values are set
 		$this->values( array(
@@ -44,14 +44,14 @@ class Model_Queue_Task extends Mango {
 			'created' => time()
 		));
 
-		return parent::create($safe);
+		return parent::create($options);
 	}
 
-	public function update( $criteria = array(), $safe = TRUE)
+	public function update( $criteria = array(), $options = array())
 	{
 		$this->updated = time();
 
-		return parent::update($criteria, $safe);
+		return parent::update($criteria, $options);
 	}
 
 	public function requeue()
