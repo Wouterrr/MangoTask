@@ -18,7 +18,7 @@
     "composer/installers": "~1.0",
     "kohana/core": ">=3.3",
     "wouterrr/mangodb": "dev-master",
-    "wouterrr/minion-daemon" : "dev-master",
+    "wouterrr/minion-daemon": "dev-3.3/develop",
     "kohana/minion": "3.3.3.1",
     "php": ">=5.3.0"
   }
